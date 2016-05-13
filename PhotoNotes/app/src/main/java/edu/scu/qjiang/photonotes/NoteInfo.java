@@ -36,14 +36,3 @@ public class NoteInfo {
 
 }
 
-//public final class NoteInfo {
-//    public NoteInfo() {}
-//
-//    public static abstract class NoteEntry implements BaseColumns {
-//        public static final String NOTES_TABLE_NAME = "notes";
-//        public static final String NOTES_COLUMN_ID = "id";
-//        public static final String NOTES_COLUMN_CAPTION = "caption";
-//        public static final String NOTES_COLUMN_PICPATH = "fullpath";
-//        public static final String NOTES_COLUMN_THUBPATH = "thumbpath";
-//    }
-//}

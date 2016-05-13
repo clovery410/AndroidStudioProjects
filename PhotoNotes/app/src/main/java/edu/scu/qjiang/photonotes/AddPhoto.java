@@ -64,7 +64,7 @@ public class AddPhoto extends AppCompatActivity {
             public void onClick(View v) {
                 thumbName = getOutputThumbnailName();
                 Thumbify thumbify = new Thumbify();
-                thumbify.generateThumbnail(fileName, thumbName);
+                thumbify.generateThumbnail(fileName.substring(7), thumbName.substring(7));
 
                 EditText et = (EditText)findViewById(R.id.note_caption);
                 NoteInfo ni = new NoteInfo();
