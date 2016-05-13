@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/clover/AndroidStudioProjects/RecyclerView/Application/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/Users/clover/AndroidStudioProjects/RecyclerView/Application/src/main/res/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/clover/AndroidStudioProjects/RecyclerView/Application/build/intermediates/res/merged/debug/layout/recycler_view_frag.xml",
+        "source": "/Users/clover/AndroidStudioProjects/RecyclerView/Application/src/main/res/layout/recycler_view_frag.xml"
+    },
+    {
+        "merged": "/Users/clover/AndroidStudioProjects/RecyclerView/Application/build/intermediates/res/merged/debug/layout/text_row_item.xml",
+        "source": "/Users/clover/AndroidStudioProjects/RecyclerView/Application/src/main/res/layout/text_row_item.xml"
+    }
+]
