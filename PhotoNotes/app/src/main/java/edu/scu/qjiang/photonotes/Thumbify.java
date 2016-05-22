@@ -2,7 +2,10 @@ package edu.scu.qjiang.photonotes;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.media.ThumbnailUtils;
+import android.widget.ImageView;
 
 import java.io.FileOutputStream;
 
@@ -21,5 +24,16 @@ public class Thumbify {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void cleanImageView(ImageView imageView) {
+        if (imageView.getDrawable() instanceof BitmapDrawable) {
+            return;
+        }
+
+        //Clean up the view's image for the sake of memory
+        BitmapDrawable b = (BitmapDrawable)imageView.getDrawable();
+        b.getBitmap().recycle();
+        imageView.setImageDrawable(null);
     }
 }

@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
@@ -32,6 +34,7 @@ public class AddPhoto extends AppCompatActivity {
     private String thumbName;
     private PhotoNoteDBHelper dbHelper;
     private Cursor cursor;
+    private ImageView mPhotoView;
 
 
     @Override
@@ -62,34 +65,42 @@ public class AddPhoto extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                thumbName = getOutputThumbnailName();
-                Thumbify thumbify = new Thumbify();
-                thumbify.generateThumbnail(fileName.substring(7), thumbName.substring(7));
+                ImageView imageView = (ImageView) findViewById(R.id.note_photo);
+                if (fileName != null && imageView.getDrawable() != null) {
+                    thumbName = getOutputThumbnailName();
+                    Thumbify thumbify = new Thumbify();
+                    thumbify.generateThumbnail(fileName.substring(7), thumbName.substring(7));
 
-                int numOfRows = dbHelper.numberOfRows();
-                int newOrder;
-                if (numOfRows == 0) {
-                    newOrder = 0;
+                    int numOfRows = dbHelper.numberOfRows();
+                    int newOrder;
+                    if (numOfRows == 0) {
+                        newOrder = 0;
+                    } else {
+                        cursor = dbHelper.selectMaxOrder();
+                        int columnIndex = cursor.getColumnIndex("max_sort_id");
+                        cursor.moveToFirst();
+                        newOrder = cursor.getInt(columnIndex) + 1;
+                        cursor.close();
+                    }
+
+                    EditText et = (EditText) findViewById(R.id.note_caption);
+                    String caption = et.getText().toString();
+                    NoteInfo ni = new NoteInfo(newOrder, caption, fileName, thumbName);
+                    Log.d("file", fileName);
+
+                    dbHelper.insertNote(ni);
+                    dbHelper.close();
+                    Intent intent = new Intent(AddPhoto.this, MainActivity.class);
+                    Log.d("qjiang", "YES");
+                    //intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                    Log.d("Photo view is: ", mPhotoView.toString());
+//                    Thumbify.cleanImageView(mPhotoView);
+                    startActivity(intent);
+                    //finish();
                 }
                 else {
-                    cursor = dbHelper.selectMaxOrder();
-                    int columnIndex = cursor.getColumnIndex("max_sort_id");
-                    cursor.moveToFirst();
-                    newOrder = cursor.getInt(columnIndex) + 1;
-                    cursor.close();
+                    Toast.makeText(getApplicationContext(), "Please take a photo and continue", Toast.LENGTH_LONG).show();
                 }
-
-                EditText et = (EditText)findViewById(R.id.note_caption);
-                String caption = et.getText().toString();
-                NoteInfo ni = new NoteInfo(newOrder, caption, fileName, thumbName);
-                Log.d("file", fileName);
-
-                dbHelper.insertNote(ni);
-                dbHelper.close();
-                Intent intent = new Intent(AddPhoto.this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                //finish();
             }
         });
 
@@ -101,8 +112,14 @@ public class AddPhoto extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != 1234 || resultCode != RESULT_OK) return;
 
-        ImageView imageView = (ImageView) findViewById(R.id.note_photo);
-        imageView.setImageURI(Uri.parse(fileName));
+        mPhotoView = (ImageView) findViewById(R.id.note_photo);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+        Bitmap picture = BitmapFactory.decodeFile(fileName.substring(7), options);
+
+        mPhotoView.setImageBitmap(picture);
+//        mPhotoView.setImageURI(Uri.parse(fileName));
     }
 
     private String getOutputFileName() {
@@ -172,5 +189,10 @@ public class AddPhoto extends AppCompatActivity {
         }
     }
 
-
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Log.d("Photo view is: ", mPhotoView.toString());
+//        Thumbify.cleanImageView(mPhotoView);
+//    }
 }

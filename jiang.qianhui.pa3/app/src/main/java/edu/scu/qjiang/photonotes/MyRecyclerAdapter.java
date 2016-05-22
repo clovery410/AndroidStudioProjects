@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +45,11 @@ public class MyRecyclerAdapter extends BaseAbstractRecycleCursorAdapter<Recycler
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
         NoteInfo note = NoteInfo.fromCursor(cursor);
         ((CustomViewHolder) holder).vCaption.setText(note.getCaption());
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inSampleSize = 8;
+//        Bitmap b = BitmapFactory.decodeFile(note.getThumbpath().substring(7), options);
         ((CustomViewHolder) holder).vThumbpath.setImageURI(Uri.parse(note.getThumbpath()));
+//        ((CustomViewHolder) holder).vThumbpath.setImageBitmap(b);
     }
 
     @Override
@@ -55,6 +61,13 @@ public class MyRecyclerAdapter extends BaseAbstractRecycleCursorAdapter<Recycler
 
     public void onItemDismissed(int position) {
         cursor.moveToPosition(position);
+        String fullpath = cursor.getString(cursor.getColumnIndex("fullpath"));
+        String thumbpath = cursor.getString(cursor.getColumnIndex("thumbpath"));
+        Log.d("deleted", thumbpath);
+        File fullImage = new File(fullpath.substring(7));
+        File thumbImage = new File(thumbpath.substring(7));
+        fullImage.delete();
+        thumbImage.delete();
         deleteItem(cursor.getInt(cursor.getColumnIndex("_id")));
         notifyItemRemoved(position);
         cursor.requery();
@@ -110,17 +123,18 @@ public class MyRecyclerAdapter extends BaseAbstractRecycleCursorAdapter<Recycler
         public void onClick(View view) {
             Log.d("NormalTextViewHolder", "onClick--> position = " + getPosition());
             NoteInfo noteInfo = NoteInfo.fromCursor((Cursor) mAdapter.getItem(getPosition()));
-            if (getPosition() < 11) {
-                Intent intent = new Intent(mAdapter.mContext, ViewPhoto.class);
-                intent.putExtra("captionContent", noteInfo.caption);
-                intent.putExtra("fullImage", noteInfo.fullpath);
-                mAdapter.mContext.startActivity(intent);
-            } else {
+//            if (getPosition() < 11) {
+            Intent intent = new Intent(mAdapter.mContext, ViewPhoto.class);
+            intent.putExtra("captionContent", noteInfo.caption);
+            //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.parse(noteInfo.fullpath));
+            intent.putExtra("fullImage", noteInfo.fullpath);
+            mAdapter.mContext.startActivity(intent);
+//            } else {
 //                Intent intent = new Intent(mAdapter.mContext, SelectActivity.class);
 //                intent.putExtra("position", getPosition());
 //                intent.putExtra("title", item.title);
 //                mAdapter.mContext.startActivity(intent);
-            }
+//            }
         }
     }
 

@@ -32,6 +32,7 @@ public class AddPhoto extends AppCompatActivity {
     private String thumbName;
     private PhotoNoteDBHelper dbHelper;
     private Cursor cursor;
+    private ImageView mPhotoView;
 
 
     @Override
@@ -101,8 +102,8 @@ public class AddPhoto extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != 1234 || resultCode != RESULT_OK) return;
 
-        ImageView imageView = (ImageView) findViewById(R.id.note_photo);
-        imageView.setImageURI(Uri.parse(fileName));
+        mPhotoView = (ImageView) findViewById(R.id.note_photo);
+        mPhotoView.setImageURI(Uri.parse(fileName));
     }
 
     private String getOutputFileName() {
@@ -170,6 +171,12 @@ public class AddPhoto extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "Cannot write to external storage! App will not work properly!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Thumbify.cleanImageView(mPhotoView);
     }
 
 
